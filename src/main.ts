@@ -1,13 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config'
+import { ConfigService } from '@nestjs/config';
+import { HttpExceptionFilter } from './httpException.filter';
 
 declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  app.useGlobalFilters(new HttpExceptionFilter());
   const config = new DocumentBuilder()
     .setTitle('Sleact API')
     .setDescription('Sleact 개발을 위한 API 문서 입니다.')
@@ -20,8 +21,8 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get('PORT') || 3000;
   await app.listen(port);
-  console.log(`listening on port ${port}`)
-  
+  console.log(`listening on port ${port}`);
+
   if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());
