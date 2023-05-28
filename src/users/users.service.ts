@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from 'src/entities/Users';
@@ -13,7 +17,7 @@ export class UsersService {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   getUser() {}
 
-  async postUsers(email: string, nickname: string, password: string) {
+  async join(email: string, nickname: string, password: string) {
     if (!email) {
       throw new BadRequestException('이메일이 없네요');
     }
@@ -27,6 +31,7 @@ export class UsersService {
     if (user) {
       throw new UnauthorizedException('이미 존재하는 사용자입니다');
     }
+    console.log('password', password);
     const hashedPassword = await bcrypt.hash(password, 12);
     await this.usersRepository.save({
       email,
